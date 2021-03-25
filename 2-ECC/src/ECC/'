@@ -1,0 +1,69 @@
+(ns ECC.core)
+
+(defn discriminant [A B]
+  (+ 
+    (* 4 (* A (* A A)))
+    (* 27 (* B B))
+  )
+)
+;calculate inverse of x mod p
+(defn inverseMod [x m & {:keys [check] :or {check 0}}]
+  (if (< check m)
+    (if (= 1 (mod (* check x) m))
+      check
+      (inverseMod x m :check (+ check 1))
+      )
+    -1
+    
+  )
+)
+(defn y [slope x b]
+  (+ (* slope x) b)
+  )
+(defn crossMod [P Q A B m]
+  (let [slope (* 
+           (- (Q 1) (P 1))
+           (inverseMod (- (Q 0) (P 0)) m))
+        b (- (P 1) (* slope (P 0)))
+        y (fn [x] (+ (* slope x) b))
+        x_3 (mod (* -1 (+ 1 (P 0) (Q 0))) m)
+        ]
+        [x_3 (y x_3)] 
+  )
+)
+(defn multiplyMod [a P m]
+  (if (= a 0) 
+    P
+    (multiplyMod (- a 1) (crossMod(P P m)) m)
+  )
+)
+(defn encrypt [msg curve p]
+)
+(defn decrypt [msg curve p]
+)
+(defn -main [& args]
+  (def m 13)
+  (def A 3)
+  (def B 8)
+  ;For A = 3 and B = 8
+  ;all possible P's are:
+  ;(1,5) (1,8) (2,3) (2,10) (9,6) (9,7) (12,2) (12,11)
+  (def P [2 10])
+  (if (= 0 (discriminant A B))
+    (println "This is not an elliptic curve")
+    (do
+      (def msg "Hello World")
+      ;n_a is Alice's secret key
+      (def n_A 15)
+      ;Q_A is Alice's public key
+      (def Q_A 17)
+      ;k is Bob's ephemeral key
+      (def k (rand-int 30))
+      "I don't do a whole lot."
+      (println (discriminant -15 18))
+      ; should be [2,3]
+      (println (crossMod [1 5] [9 6] A B m))
+    )
+  )
+)
+  
