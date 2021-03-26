@@ -57,10 +57,10 @@ def attack_weakest_neighbor(G, values, side):
             possibleEnds.add(neighbor)
     if side == -1:
         #possible ends is the index
-        possibleEnds = [end for end in possibleEnds if values[end] <= 0]
-        end = values.index(min([values[end] for end in possibleEnds]))
+        possibleEnds = [end for end in possibleEnds if values[end] >= 0]
+        end = min(possibleEnds, key=lambda x: values[x])
         possibleStarts = [start for start in list(G.neighbors(end)) if values[start] < 0]
-        start = values.index(min([values[start] for start in possibleStarts]))
+        start = min(possibleStarts, key=lambda x: values[x])
     else:
         possibleEnds = [end for end in possibleEnds if values[end] <= 0]
         end = max(possibleEnds, key=lambda x: values[x])
@@ -93,8 +93,8 @@ for _ in range(50):
     plt.pause(1)
     plt.close('all')
     values = add_values(values)
-    posMove = attack_weakest_neighbor(G, values, 1)
-    negMove = get_random_move(G, values, -1)
+    negMove = attack_weakest_neighbor(G, values, -1)
+    posMove = get_random_move(G, values, 1)
     values = make_moves(G, values, posMove, negMove)
 
 print("Winner: " + str(check_winner(values)))
